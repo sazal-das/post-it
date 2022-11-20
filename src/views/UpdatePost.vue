@@ -6,7 +6,7 @@
           <i class="fa-solid fa-arrow-left"></i>
         </button>
       </div>
-      <div class="page-title">Add new post</div>
+      <div class="page-title">Update post</div>
     </div>
     <div class="form-section">
       <form @submit.prevent="onSubmit">
