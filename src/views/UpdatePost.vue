@@ -23,37 +23,53 @@
 </template>
 
 <script setup>
+// Import necessary things
 import { ref, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 
+// Initialize store
 const store = useStore();
 
+// Initailize  router and route
 const router = useRouter();
 const route = useRoute();
 
+// Get single post from getters
 const singlePost = computed(() => store.getters.getSinglePost);
 
+// Mounted function this will call before component rander
 onMounted(() => {
+  // Call action to get single post by id
   store.dispatch("findSinglePost", route.params.id);
 
+  // Set title and description
   title.value = singlePost.value.title;
   description.value = singlePost.value.description;
 });
 
+// Initialize title and description
 const title = ref("");
 const description = ref("");
 
+// Update post function
 const onSubmit = () => {
+  // Check title and description have data or not
   if (title.value.trim() === "" || description.value.trim() === "") {
     return;
   }
+
+  // Make payload with changed data
   const payload = {
     id: route.params.id,
     title: title.value,
     description: description.value,
   };
+
+  //Call  update post action
   store.dispatch("updatePost", payload);
+
+  // Back to all posts page after update
   router.back();
 };
 </script>

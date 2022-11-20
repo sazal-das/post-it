@@ -2,14 +2,18 @@
   <div class="container">
     <h2 class="page-title">Post-it</h2>
     <div class="content">
+      <!-- Show this if no post available -->
       <div v-if="!allPosts.length" class="no-item-msg">No avaiable posts</div>
+      <!-- Show list of all posts -->
       <div v-if="allPosts.length" class="context-list">
         <div v-for="post,index in allPosts" :key="index" class>
           <div class="item">
             <div class="btn-position">
+              <!-- Update post button this will takes user to update page -->
               <button class="edit-btn" @click="onClickEditPost(post.id)">
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
+              <!-- Delete post button. Will remove the post from local storage -->
               <button class="delete-btn" @click="onClickDeletePost(post.id)">
                 <i class="fa-solid fa-trash"></i>
               </button>
@@ -19,6 +23,7 @@
               <p>{{post.description}}</p>
             </div>
             <div class="btn-position">
+              <!-- Post details view button. Will pass user to detail view page -->
               <button class="view-btn" @click="$router.push(`/view-post/${post.id}`)">
                 <i class="fa-solid fa-arrow-right"></i>
               </button>
@@ -27,6 +32,7 @@
         </div>
       </div>
       <div class="add-post-btn">
+        <!-- Create new post button -->
         <button class="create-btn" @click="onClickAddPost">Add a post</button>
       </div>
     </div>
@@ -34,22 +40,31 @@
 </template>
 
 <script setup>
+// Import necessary things
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
+// Initialize route
 const router = useRouter();
+
+// Initialize store
 const store = useStore();
 
+// Get all posts from getters
 const allPosts = computed(() => store.getters.getAllPosts);
 
+// Call delete post action by id
 const onClickDeletePost = (id) => {
   store.dispatch("deletePost", id);
 };
+
+// Pass user to update page with post id
 const onClickEditPost = (id) => {
   router.push(`/update-post/${id}`);
 };
 
+// Pass user to create new post page
 const onClickAddPost = () => {
   router.push({ name: "addPost" });
 };

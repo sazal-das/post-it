@@ -16,6 +16,7 @@
 </template>
 
 <script setup>
+// Import necessary things
 import { onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -24,9 +25,11 @@ const store = useStore();
 
 const route = useRoute();
 
+// Get single post from getters
 const singlePost = computed(() => store.getters.getSinglePost);
 
 onMounted(() => {
+  // Call action to get single post
   store.dispatch("findSinglePost", route.params.id);
 });
 </script> 

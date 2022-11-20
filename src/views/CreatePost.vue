@@ -23,15 +23,18 @@
 </template>
 
 <script setup>
+// Import necessary things
 import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 const store = useStore();
 
+// Get all posts form store
 const allPosts = computed(() => store.getters.getAllPosts);
 
 onMounted(() => {
+  // Get id from localstorege. We will use this with every posts as unique data.
   id.value = localStorage.getItem("ID") || 0;
 });
 
@@ -42,20 +45,27 @@ const description = ref("");
 const id = ref(0);
 
 watch(id, (newVal) => {
+  // check if id changed or not. If changed then update local storage id value.
   localStorage.setItem("ID", newVal);
 });
 
+// Create new post function
 const onSubmit = () => {
+  // Check title and description have value or not
   if (title.value.trim() === "" || description.value.trim() === "") {
     return;
   }
+  // Make payload with post data to create
   const payload = {
-    id: ++id.value,
+    id: ++id.value, //Increament id value from previous value
     title: title.value,
     description: description.value,
   };
+  // push new data into the allpost array
   allPosts.value.push(payload);
+  // Call action to create all new post
   store.dispatch("createNewPost", allPosts.value);
+  // Take user to all post page after create
   router.push("/");
 };
 </script>
