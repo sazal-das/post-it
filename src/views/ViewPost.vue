@@ -9,31 +9,26 @@
       <div class="page-title">Back to my posts</div>
     </div>
     <div class="content">
-      <div class="item-title">{{selectedPost.title}}</div>
-      <div class="item-description">{{selectedPost.description}}</div>
+      <div class="item-title">{{singlePost.title}}</div>
+      <div class="item-description">{{singlePost.description}}</div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const route = useRoute();
 
+const singlePost = computed(() => store.getters.getSinglePost);
+
 onMounted(() => {
-  posts.value = JSON.parse(localStorage.getItem("POSTS")) || [];
-  getPost();
+  store.dispatch("findSinglePost", route.params.id);
 });
-
-const getPost = () => {
-  selectedPost.value = posts.value.find(
-    (post) => Number(post.id) === Number(route.params.id)
-  );
-};
-
-const posts = ref([]);
-const selectedPost = ref({});
 </script> 
 
 <style scoped>

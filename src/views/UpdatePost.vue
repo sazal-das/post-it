@@ -23,46 +23,37 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const router = useRouter();
 const route = useRoute();
 
+const singlePost = computed(() => store.getters.getSinglePost);
+
 onMounted(() => {
-  id.value = localStorage.getItem("ID") || 0;
-  posts.value = JSON.parse(localStorage.getItem("POSTS")) || [];
-  selectedPost.value = posts.value.find(
-    (post) => Number(post.id) === Number(route.params.id)
-  );
-  title.value = selectedPost.value.title;
-  description.value = selectedPost.value.description;
+  store.dispatch("findSinglePost", route.params.id);
+
+  title.value = singlePost.value.title;
+  description.value = singlePost.value.description;
 });
 
 const title = ref("");
 const description = ref("");
-const id = ref(0);
-const posts = ref([]);
-const selectedPost = ref({});
-
-watch(id, (newVal) => {
-  localStorage.setItem("ID", newVal);
-});
 
 const onSubmit = () => {
   if (title.value.trim() === "" || description.value.trim() === "") {
     return;
   }
-
-  posts.value.map((post) => {
-    if (Number(post.id) === Number(route.params.id)) {
-      post.title = title.value;
-      post.description = description.value;
-      return post;
-    }
-    return post;
-  });
-  localStorage.setItem("POSTS", JSON.stringify(posts.value));
+  const payload = {
+    id: route.params.id,
+    title: title.value,
+    description: description.value,
+  };
+  store.dispatch("updatePost", payload);
   router.back();
 };
 </script>

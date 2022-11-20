@@ -23,12 +23,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+
+const store = useStore();
+
+const allPosts = computed(() => store.getters.getAllPosts);
 
 onMounted(() => {
   id.value = localStorage.getItem("ID") || 0;
-  posts.value = JSON.parse(localStorage.getItem("POSTS")) || [];
 });
 
 const router = useRouter();
@@ -36,7 +40,6 @@ const router = useRouter();
 const title = ref("");
 const description = ref("");
 const id = ref(0);
-const posts = ref([]);
 
 watch(id, (newVal) => {
   localStorage.setItem("ID", newVal);
@@ -51,8 +54,8 @@ const onSubmit = () => {
     title: title.value,
     description: description.value,
   };
-  posts.value.push(payload);
-  localStorage.setItem("POSTS", JSON.stringify(posts.value));
+  allPosts.value.push(payload);
+  store.dispatch("createNewPost", allPosts.value);
   router.push("/");
 };
 </script>

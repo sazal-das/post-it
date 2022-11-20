@@ -2,9 +2,9 @@
   <div class="container">
     <h2 class="page-title">Post-it</h2>
     <div class="content">
-      <div v-if="!posts.length" class="no-item-msg">No avaiable posts</div>
-      <div v-if="posts.length" class="context-list">
-        <div v-for="post,index in posts" :key="index" class>
+      <div v-if="!allPosts.length" class="no-item-msg">No avaiable posts</div>
+      <div v-if="allPosts.length" class="context-list">
+        <div v-for="post,index in allPosts" :key="index" class>
           <div class="item">
             <div class="btn-position">
               <button class="edit-btn" @click="onClickEditPost(post.id)">
@@ -34,31 +34,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 const router = useRouter();
+const store = useStore();
 
-onMounted(() => {
-  posts.value = JSON.parse(localStorage.getItem("POSTS")) || [];
-});
-
-const posts = ref([]);
+const allPosts = computed(() => store.getters.getAllPosts);
 
 const onClickDeletePost = (id) => {
-  posts.value = posts.value.filter((post) => Number(post.id) !== Number(id));
+  store.dispatch("deletePost", id);
 };
 const onClickEditPost = (id) => {
   router.push(`/update-post/${id}`);
 };
-
-watch(
-  posts,
-  (newVal) => {
-    localStorage.setItem("POSTS", JSON.stringify(newVal));
-  },
-  { deep: true }
-);
 
 const onClickAddPost = () => {
   router.push({ name: "addPost" });
